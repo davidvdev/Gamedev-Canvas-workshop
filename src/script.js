@@ -92,16 +92,35 @@ const movePaddle = () => {
     }
 }
 
-const checkEdgeCollision = () => {
-    if (ball.y + ball.dy < ball.r || ball.y + ball.dy > canvas.height-ball.r){
-        ball.dy = -ball.dy
-        ball.color === "blue" ? ball.color = "red" : ball.color= "blue"
-    }
+const checkEdgeCollision = (mode = 'default') => {
     if (ball.x + ball.dx < ball.r || ball.x + ball.dx > canvas.width-ball.r){
         ball.dx = -ball.dx
-        ball.color === "blue" ? ball.color = "green" : ball.color= "yellow"
+        ball.color= "yellow"
+    }
+    if (mode === "infinite"){
+        if (ball.y + ball.dy < ball.r || ball.y + ball.dy > canvas.height-ball.r){
+            ball.dy = -ball.dy
+            ball.color = "red"
+        }
+    } else {
+        if (ball.y + ball.dy < ball.r ){
+            ball.dy = -ball.dy
+            ball.color = "green"
+        } else if (ball.y + ball.dy > canvas.height-ball.r){
+            if ( ball.x > paddle.x && ball.x < paddle.x + paddle.w){
+                ball.color = paddle.color
+                ball.dy = -ball.dy
+            } else {
+                alert("GAME OVER")
+                document.location.reload()
+                clearInterval(interval)
+            }
+            
+        }
     }
 }
+
+
 
 const canvasUpdate = () => {
     // clear the canvas
@@ -111,12 +130,12 @@ const canvasUpdate = () => {
     drawPaddle()
 
     movePaddle()
-    moveBall(ball.dx, ball.dy)
     checkEdgeCollision()
+    moveBall(ball.dx, ball.dy)
 
 }
 
 // run the game
 document.addEventListener("keydown", controlHandler.down, false);
 document.addEventListener("keyup", controlHandler.up, false);
-setInterval(canvasUpdate,10)
+const interval = setInterval(canvasUpdate,10)
