@@ -20,11 +20,6 @@ const paddle = {
     color: "blue"
 }
 
-// controls object
-const control = {
-    leftPressed: false,
-    rightPressed: false
-}
 
 // bricks object
 const bricks = {
@@ -36,6 +31,19 @@ const bricks = {
     offSetT: 30,
     offSetL: 30,
     color: "teal"
+}
+
+// controls object
+const control = {
+    leftPressed: false,
+    rightPressed: false
+}
+
+// score object
+const session = {
+    score: 0,
+    player: 'AAAAAA',
+    level: 0
 }
 
 const bricksArr = []
@@ -98,6 +106,12 @@ const drawPaddle = () => {
     ctx.closePath()
 }
 
+const drawScore = () => {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = paddle.color
+    ctx.fillText("Score: " + session.score, 8, 20)
+}
+
 // MOVEMENT FUNCTIONS
 const moveBall = (dx, dy) => {
     ball.x += dx
@@ -147,8 +161,15 @@ const checkBrickCollision = () => {
             let brick = bricksArr[c][r]
             if(brick.status === 1) {
                 if( ball.x > brick.x && ball.x < brick.x + bricks.w && ball.y > brick.y && ball.y < brick.y + bricks.h){
-                        ball.dy = -ball.dy
-                        brick.status = 0
+                    ball.dy = -ball.dy
+                    brick.status = 0
+                    session.score++
+                    if (session.score === bricks.rows * bricks.cols) {
+                        alert("YOU WIN! CONGRATULATIONS!")
+                        document.location.reload()
+                        clearInterval(interval)
+                    }
+
                 }
             }
             
@@ -161,6 +182,7 @@ const canvasUpdate = () => {
     // clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+    drawScore()
     drawBricks()
     drawBall()
     drawPaddle()
@@ -171,7 +193,7 @@ const canvasUpdate = () => {
     checkBrickCollision()
 
 }
-console.log(bricksArr)
+
 document.addEventListener("keydown", controlHandler.down, false);
 document.addEventListener("keyup", controlHandler.up, false);
 const interval = setInterval(canvasUpdate,10)
