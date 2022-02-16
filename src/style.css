@@ -3,8 +3,20 @@
     margin: 0; 
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    text-align: center;
+    font-family: sans-serif;
+    padding: 0.5em;
+}
+
 canvas {
-    background: #eee;
+    background: whitesmoke;
     display: block;
     margin: 0 auto;
 }
