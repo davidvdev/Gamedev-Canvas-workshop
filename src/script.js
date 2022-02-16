@@ -43,7 +43,7 @@ const bricksArr = []
 for(let c = 0; c < bricks.cols; c++){
     bricksArr[c] = [];
     for (let r = 0; r < bricks.rows; r++){
-        bricksArr[c][r] = {x: 0, y: 0}
+        bricksArr[c][r] = {x: 0, y: 0, status: 1}
     }
 }
 
@@ -67,15 +67,17 @@ const controlHandler = {
 const drawBricks = () => {
     for (let c = 0; c < bricks.cols; c++){
         for (let r = 0; r < bricks.rows; r++){
-            const brickX = (c * (bricks.w + bricks.pad)) + bricks.offSetL
-            const brickY = (r * (bricks.h + bricks.pad)) + bricks.offSetT
-            bricksArr[c][r].x = brickX
-            bricksArr[c][r].y = brickY
-            ctx.beginPath()
-            ctx.rect(brickX, brickY, bricks.w, bricks.h)
-            ctx.fillStyle = bricks.color
-            ctx.fill()
-            ctx.closePath()
+            if(bricksArr[c][r].status === 1) {
+                const brickX = (c * (bricks.w + bricks.pad)) + bricks.offSetL
+                const brickY = (r * (bricks.h + bricks.pad)) + bricks.offSetT
+                bricksArr[c][r].x = brickX
+                bricksArr[c][r].y = brickY
+                ctx.beginPath()
+                ctx.rect(brickX, brickY, bricks.w, bricks.h)
+                ctx.fillStyle = bricks.color
+                ctx.fill()
+                ctx.closePath()
+            }
         }
     }
 }
@@ -110,6 +112,7 @@ const movePaddle = () => {
     }
 }
 
+// COLLISION FUNCTIONS
 const checkEdgeCollision = (mode = 'default') => {
     if (ball.x + ball.dx < ball.r || ball.x + ball.dx > canvas.width-ball.r){
         ball.dx = -ball.dx
@@ -138,8 +141,22 @@ const checkEdgeCollision = (mode = 'default') => {
     }
 }
 
+const checkBrickCollision = () => {
+    for(let c = 0; c < bricks.cols; c++){
+        for (let r = 0; r < bricks.rows; r++){
+            let brick = bricksArr[c][r]
+            if(brick.status === 1) {
+                if( ball.x > brick.x && ball.x < brick.x + bricks.w && ball.y > brick.y && ball.y < brick.y + bricks.h){
+                        ball.dy = -ball.dy
+                        brick.status = 0
+                }
+            }
+            
+        }
+    }
+}
 
-
+// RUN THE GAME
 const canvasUpdate = () => {
     // clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -151,10 +168,10 @@ const canvasUpdate = () => {
     movePaddle()
     checkEdgeCollision()
     moveBall(ball.dx, ball.dy)
+    checkBrickCollision()
 
 }
-
-// run the game
+console.log(bricksArr)
 document.addEventListener("keydown", controlHandler.down, false);
 document.addEventListener("keyup", controlHandler.up, false);
 const interval = setInterval(canvasUpdate,10)
