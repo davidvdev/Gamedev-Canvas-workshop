@@ -48,12 +48,16 @@ const session = {
 
 const bricksArr = []
 
-for(let c = 0; c < bricks.cols; c++){
-    bricksArr[c] = [];
-    for (let r = 0; r < bricks.rows; r++){
-        bricksArr[c][r] = {x: 0, y: 0, status: 1}
+const initBricks = () => {
+    for(let c = 0; c < bricks.cols; c++){
+        bricksArr[c] = [];
+        for (let r = 0; r < bricks.rows; r++){
+            bricksArr[c][r] = {x: 0, y: 0, status: 1}
+        }
     }
 }
+initBricks()
+
 
 const controlHandler = {
     up: (e) => {
@@ -61,12 +65,19 @@ const controlHandler = {
             control.rightPressed = false
         } else if (e.key == "Left" || e.key == "ArrowLeft"){
             control.leftPressed = false
-        }},
+        }
+    },
     down: (e) => {
         if(e.key == "Right" || e.key == "ArrowRight"){
             control.rightPressed = true
         } else if (e.key == "Left" || e.key == "ArrowLeft"){
             control.leftPressed = true
+        }
+    },
+    mouse: (e) => {
+        let relX = e.clientX - canvas.offsetLeft
+        if(relX > 0 && relX < canvas.width){
+            paddle.x = relX - paddle.w/2
         }
     }
 }
@@ -196,4 +207,5 @@ const canvasUpdate = () => {
 
 document.addEventListener("keydown", controlHandler.down, false);
 document.addEventListener("keyup", controlHandler.up, false);
+document.addEventListener('mousemove', controlHandler.mouse, false)
 const interval = setInterval(canvasUpdate,10)
