@@ -2,27 +2,6 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
-// LESSON-01
-// ctx.beginPath();
-// ctx.rect(20, 40, 50, 50);
-// ctx.fillStyle = "#FF0000";
-// ctx.fill();
-// ctx.closePath();
-
-// ctx.beginPath();
-// ctx.arc(240, 160, 20, 0, Math.PI*2, false);
-// ctx.fillStyle = "green";
-// ctx.fill();
-// ctx.closePath();
-
-// ctx.beginPath();
-// ctx.rect(160, 10, 100, 40);
-// ctx.strokeStyle = "rgba(0, 0, 255, 0.5)";
-// ctx.stroke();
-// ctx.closePath();
-
-// LESSON-02
-
 // ball object
 const ball = {
     x: canvas.width/2,
@@ -47,6 +26,27 @@ const control = {
     rightPressed: false
 }
 
+// bricks object
+const bricks = {
+    rows: 3,
+    cols: 5,
+    w: 75,
+    h: 20,
+    pad: 10,
+    offSetT: 30,
+    offSetL: 30,
+    color: "teal"
+}
+
+const bricksArr = []
+
+for(let c = 0; c < bricks.cols; c++){
+    bricksArr[c] = [];
+    for (let r = 0; r < bricks.rows; r++){
+        bricksArr[c][r] = {x: 0, y: 0}
+    }
+}
+
 const controlHandler = {
     up: (e) => {
         if(e.key == "Right" || e.key == "ArrowRight"){
@@ -59,6 +59,23 @@ const controlHandler = {
             control.rightPressed = true
         } else if (e.key == "Left" || e.key == "ArrowLeft"){
             control.leftPressed = true
+        }
+    }
+}
+
+// DRAWING FUNCTIONS
+const drawBricks = () => {
+    for (let c = 0; c < bricks.cols; c++){
+        for (let r = 0; r < bricks.rows; r++){
+            const brickX = (c * (bricks.w + bricks.pad)) + bricks.offSetL
+            const brickY = (r * (bricks.h + bricks.pad)) + bricks.offSetT
+            bricksArr[c][r].x = brickX
+            bricksArr[c][r].y = brickY
+            ctx.beginPath()
+            ctx.rect(brickX, brickY, bricks.w, bricks.h)
+            ctx.fillStyle = bricks.color
+            ctx.fill()
+            ctx.closePath()
         }
     }
 }
@@ -79,6 +96,7 @@ const drawPaddle = () => {
     ctx.closePath()
 }
 
+// MOVEMENT FUNCTIONS
 const moveBall = (dx, dy) => {
     ball.x += dx
     ball.y += dy
@@ -126,6 +144,7 @@ const canvasUpdate = () => {
     // clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+    drawBricks()
     drawBall()
     drawPaddle()
 
