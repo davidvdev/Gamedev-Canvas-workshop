@@ -29,13 +29,14 @@ const ball = {
     y: canvas.height-30,
     r: 10,
     dx: 2,
-    dy: -2
+    dy: -2,
+    color: "blue"
 }
 
 const drawBall = () => {
     ctx.beginPath()
     ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2)
-    ctx.fillStyle = "#0095DD"
+    ctx.fillStyle = ball.color
     ctx.fill()
     ctx.closePath()
 }
@@ -53,9 +54,12 @@ const canvasUpdate = () => {
 
     if (ball.y + ball.dy < ball.r || ball.y + ball.dy > canvas.height-ball.r){
         ball.dy = -ball.dy
+        ball.color === "blue" ? ball.color = "red" : ball.color= "blue"
     }
     if (ball.x + ball.dx < ball.r || ball.x + ball.dx > canvas.width-ball.r){
         ball.dx = -ball.dx
+        ball.color === "blue" ? ball.color = "green" : ball.color= "yellow"
+
     }
 
     moveBall(ball.dx, ball.dy)
