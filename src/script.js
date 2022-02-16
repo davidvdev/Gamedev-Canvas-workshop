@@ -33,10 +33,48 @@ const ball = {
     color: "blue"
 }
 
+// paddle object
+const paddle = {
+    h: 10,
+    w: 75,
+    x: (canvas.width - 75) / 2,
+    color: "blue"
+}
+
+// controls object
+const control = {
+    leftPressed: false,
+    rightPressed: false
+}
+
+const controlHandler = {
+    up: (e) => {
+        if(e.key == "Right" || e.key == "ArrowRight"){
+            control.rightPressed = false
+        } else if (e.key == "Left" || e.key == "ArrowLeft"){
+            control.leftPressed = false
+        }},
+    down: (e) => {
+        if(e.key == "Right" || e.key == "ArrowRight"){
+            control.rightPressed = true
+        } else if (e.key == "Left" || e.key == "ArrowLeft"){
+            control.leftPressed = true
+        }
+    }
+}
+
 const drawBall = () => {
     ctx.beginPath()
     ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2)
     ctx.fillStyle = ball.color
+    ctx.fill()
+    ctx.closePath()
+}
+
+const drawPaddle = () => {
+    ctx.beginPath()
+    ctx.rect(paddle.x, canvas.height - paddle.h, paddle.w, paddle.h)
+    ctx.fillStyle = paddle.color
     ctx.fill()
     ctx.closePath()
 }
@@ -46,12 +84,15 @@ const moveBall = (dx, dy) => {
     ball.y += dy
 }
 
-const canvasUpdate = () => {
-    // clear the canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+const movePaddle = () => {
+    if(control.rightPressed){
+        paddle.x += 7
+    } else if (control.leftPressed){
+        paddle.x -= 7
+    }
+}
 
-    drawBall()
-
+const checkEdgeCollision = () => {
     if (ball.y + ball.dy < ball.r || ball.y + ball.dy > canvas.height-ball.r){
         ball.dy = -ball.dy
         ball.color === "blue" ? ball.color = "red" : ball.color= "blue"
@@ -59,11 +100,23 @@ const canvasUpdate = () => {
     if (ball.x + ball.dx < ball.r || ball.x + ball.dx > canvas.width-ball.r){
         ball.dx = -ball.dx
         ball.color === "blue" ? ball.color = "green" : ball.color= "yellow"
-
     }
+}
 
+const canvasUpdate = () => {
+    // clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    drawBall()
+    drawPaddle()
+
+    movePaddle()
     moveBall(ball.dx, ball.dy)
+    checkEdgeCollision()
 
 }
 
+// run the game
+document.addEventListener("keydown", controlHandler.down, false);
+document.addEventListener("keyup", controlHandler.up, false);
 setInterval(canvasUpdate,10)
