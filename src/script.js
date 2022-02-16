@@ -23,17 +23,18 @@ const ctx = canvas.getContext("2d");
 
 // LESSON-02
 
-// ball coords
+// ball object
 const ball = {
     x: canvas.width/2,
     y: canvas.height-30,
+    r: 10,
     dx: 2,
     dy: -2
 }
 
 const drawBall = () => {
     ctx.beginPath()
-    ctx.arc(ball.x, ball.y, 10, 0, Math.PI*2)
+    ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2)
     ctx.fillStyle = "#0095DD"
     ctx.fill()
     ctx.closePath()
@@ -48,10 +49,15 @@ const canvasUpdate = () => {
     // clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-    // draw a ball
     drawBall()
 
-    // move ball
+    if (ball.y + ball.dy < ball.r || ball.y + ball.dy > canvas.height-ball.r){
+        ball.dy = -ball.dy
+    }
+    if (ball.x + ball.dx < ball.r || ball.x + ball.dx > canvas.width-ball.r){
+        ball.dx = -ball.dx
+    }
+
     moveBall(ball.dx, ball.dy)
 
 }
