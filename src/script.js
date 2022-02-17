@@ -43,7 +43,8 @@ const control = {
 const session = {
     score: 0,
     player: 'AAAAAA',
-    level: 0
+    level: 0,
+    lives: 3
 }
 
 const bricksArr = []
@@ -123,6 +124,12 @@ const drawScore = () => {
     ctx.fillText("Score: " + session.score, 8, 20)
 }
 
+const drawLives = () => {
+    ctx.font = "16px Arial"
+    ctx.fillStyle = paddle.color
+    ctx.fillText("Lives: " + session.lives, canvas.width - 65, 20)
+}
+
 // MOVEMENT FUNCTIONS
 const moveBall = (dx, dy) => {
     ball.x += dx
@@ -157,9 +164,17 @@ const checkEdgeCollision = (mode = 'default') => {
                 ball.color = paddle.color
                 ball.dy = -ball.dy
             } else {
-                alert("GAME OVER")
-                document.location.reload()
-                clearInterval(interval)
+                session.lives--
+                if(!session.lives){
+                    alert("GAME OVER")
+                    document.location.reload()
+                } else {
+                    ball.x = canvas.width / 2
+                    ball.y = canvas.height - 30
+                    ball.dx = 2
+                    ball.dy = -2
+                    paddle.x = (canvas.width - paddle.w) / 2
+                }
             }
             
         }
@@ -178,7 +193,6 @@ const checkBrickCollision = () => {
                     if (session.score === bricks.rows * bricks.cols) {
                         alert("YOU WIN! CONGRATULATIONS!")
                         document.location.reload()
-                        clearInterval(interval)
                     }
 
                 }
@@ -194,6 +208,7 @@ const canvasUpdate = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     drawScore()
+    drawLives()
     drawBricks()
     drawBall()
     drawPaddle()
@@ -203,9 +218,10 @@ const canvasUpdate = () => {
     moveBall(ball.dx, ball.dy)
     checkBrickCollision()
 
+    requestAnimationFrame(canvasUpdate)
 }
 
 document.addEventListener("keydown", controlHandler.down, false);
 document.addEventListener("keyup", controlHandler.up, false);
 document.addEventListener('mousemove', controlHandler.mouse, false)
-const interval = setInterval(canvasUpdate,10)
+canvasUpdate()
